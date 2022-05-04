@@ -24,7 +24,7 @@ namespace KaLENDERFINAL
     public partial class MainWindow : Window
     {
         public string fname = "data.json";
-        public string data = "{}";
+        public string data = "[{\"Date\":\"\",\"Name\":\"\",\"ExtendedDesc\":\"\",\"Done\":false,\"NoDo\":false}]";
         public MainWindow()
         {
          InitializeComponent();
@@ -46,7 +46,6 @@ namespace KaLENDERFINAL
         {
             public DateTime Date { get; set; }
             public string Name { get; set; }
-            public string Title { get; set; }
             public string? ExtendedDesc { get; set; }
             public bool Done { get; set; }
             public bool NoDo { get; set; }
@@ -64,16 +63,29 @@ namespace KaLENDERFINAL
                 DateTime date = calendar.SelectedDate.Value;
                 this.Title= date.ToShortDateString();
             }
+            //Add a check here if any of the dates in the list match somehow
+            //vb vaja teha mingi date list et teha quick searchi aga äkki otsida et kas saab otsida class elementide kaupa
         }
-        private void tested (object sender, RoutedEventArgs e)
+        private void ad (object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Un gran bruh momento");
         }
 
 
         //this also works as a serializiation example for later
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void tested(object sender, RoutedEventArgs e)
         {
+            //input the things
+            DailyTask dailyTask = new DailyTask();  
+            dailyTask.Date = DateTime.Now;
+            dailyTask.Name = "Magama";
+            dailyTask.ExtendedDesc = "Go to slep lol";
+            dailyTask.Done = false;
+            dailyTask.NoDo = false;
+            //drop that into a list
+            List<DailyTask> tasks = new List<DailyTask> {dailyTask};
+            //and write that into a file
+            File.WriteAllText("data.json",JsonSerializer.Serialize<List<DailyTask>>(tasks));
 
         }
     }
