@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.Json;
 using System.Collections.Generic;
+using System.Data;
 
 namespace KaLENDERFINAL
 {
@@ -33,6 +34,8 @@ namespace KaLENDERFINAL
             {
                 data = File.ReadAllText(fname);
             }
+            
+            //dateGrid.
         }
         //data formatting:
         /*
@@ -40,7 +43,7 @@ namespace KaLENDERFINAL
          * Task name
          * Task desc????
          * Task done
-         * Task ain't gonna do it
+         * In progress
         */
         private class DailyTask
         {
@@ -48,24 +51,62 @@ namespace KaLENDERFINAL
             public string Name { get; set; }
             public string? ExtendedDesc { get; set; }
             public bool Done { get; set; }
-            public bool NoDo { get; set; }
+            public bool InProgress { get; set; }
         }
         private void Calendar_SelectedDatesChanged(object sender,
             SelectionChangedEventArgs e)
         {
-            List<DailyTask> tasks = new List<DailyTask>();
+            StackPanel datePanel = (StackPanel)this.FindName("dateStack");
+            datePanel.Children.Clear();
             //Get reference. (an anime one perhaps?) (no.)
             var calendar = sender as Calendar;
-            tasks = JsonSerializer.Deserialize<List<DailyTask>>(data);
             //See if a date is selected. (what if no eyes doe)
             if (calendar.SelectedDate.HasValue)
             {
                 DateTime date = calendar.SelectedDate.Value;
-                this.Title= date.ToShortDateString();
+               this.Title= date.ToShortDateString();
             }
-            //Add a check here if any of the dates in the list match somehow
-            //vb vaja teha mingi date list et teha quick searchi aga äkki otsida et kas saab otsida class elementide kaupa
+            //parse date
+            List<DailyTask> tasks = new List<DailyTask>();
+            tasks = JsonSerializer.Deserialize<List<DailyTask>>(data);
+
+            //this may be a bad Idea
+            //too bad
+            foreach (DailyTask task in tasks)
+            {
+
+                if (task.Date.ToShortDateString() == calendar.SelectedDate.Value.Date.ToShortDateString())
+                {
+                    //siia toppida mingi canvas koos mitme tekstivälja ja kahe checkboxiga
+                    Label date = new Label();
+                    date.Content = task.Date.ToShortDateString();
+                    date.FontSize = 20;
+                    Label time = new Label();
+                    time.Content = task.Date.ToShortTimeString();
+                    time.FontSize = 20;
+                    Label name = new Label();
+                    name.Content = task.Name;
+                    name.FontSize = 20;
+                    CheckBox done = new CheckBox();
+                    done.Content = task.Done;
+                    CheckBox inProgress = new CheckBox();
+                    inProgress.Content = task.InProgress;
+
+                    StackPanel stackPanel = new StackPanel();
+                    stackPanel.Orientation = Orientation.Horizontal;
+                    stackPanel.Children.Add(date);
+                    stackPanel.Children.Add(time);
+                    stackPanel.Children.Add(done);
+                    stackPanel.Children.Add(inProgress);
+
+                    datePanel.Children.Add(stackPanel);
+                }
+            }
+            
+            
         }
+        
+        //quicc test mesag
         private void ad (object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Un gran bruh momento");
@@ -81,7 +122,7 @@ namespace KaLENDERFINAL
             dailyTask.Name = "Magama";
             dailyTask.ExtendedDesc = "Go to slep lol";
             dailyTask.Done = false;
-            dailyTask.NoDo = false;
+            dailyTask.InProgress = false;
             //drop that into a list
             List<DailyTask> tasks = new List<DailyTask> {dailyTask};
             //and write that into a file

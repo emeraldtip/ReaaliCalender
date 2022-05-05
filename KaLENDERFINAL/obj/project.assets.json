@@ -8,25 +8,28 @@
     "net6.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\sgjes\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\karlj\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\sgjes\\source\\repos\\ReaaliCalender\\KaLENDERFINAL\\KaLENDERFINAL.csproj",
+      "projectUniqueName": "C:\\Users\\karlj\\source\\repos\\KaLENDERFINAL\\KaLENDERFINAL\\KaLENDERFINAL.csproj",
       "projectName": "KaLENDERFINAL",
-      "projectPath": "C:\\Users\\sgjes\\source\\repos\\ReaaliCalender\\KaLENDERFINAL\\KaLENDERFINAL.csproj",
-      "packagesPath": "C:\\Users\\sgjes\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\sgjes\\source\\repos\\ReaaliCalender\\KaLENDERFINAL\\obj\\",
+      "projectPath": "C:\\Users\\karlj\\source\\repos\\KaLENDERFINAL\\KaLENDERFINAL\\KaLENDERFINAL.csproj",
+      "packagesPath": "C:\\Users\\karlj\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\karlj\\source\\repos\\KaLENDERFINAL\\KaLENDERFINAL\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\sgjes\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\karlj\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net6.0-windows7.0"
@@ -68,7 +71,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.104\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

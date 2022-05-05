@@ -40,7 +40,7 @@
             </Calendar.RenderTransform>
 
         </Calendar>
-        <StackPanel
+        <StackPanel x:Name="dateStack"
             Grid.Column="1"
             Grid.ColumnSpan="3"
             Margin="359,56,-1,-1"
