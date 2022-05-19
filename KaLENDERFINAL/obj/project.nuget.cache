@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "3VN9aJxVLWeulrKZkGM82drBTLABMwnsDoJ8sMbktp80GLkV/3QOkw1N2//0vzXmHd65E0tIKaKfrzEzfAHY7Q==",
+  "dgSpecHash": "lTP6vWPk0B1ckYblgCa/4XQDqa7Y83LVw3mCOqaDKfvGBSNRsBPMb+UnvcBzhKxoVShJvF+2I//V0RxiAXvJkg==",
   "success": true,
   "projectFilePath": "C:\\Users\\karlj\\source\\repos\\KaLENDERFINAL\\KaLENDERFINAL\\KaLENDERFINAL.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\karlj\\.nuget\\packages\\htmlagilitypack\\1.11.42\\htmlagilitypack.1.11.42.nupkg.sha512",
+    "C:\\Users\\karlj\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -40,3 +40,6 @@ C:\Users\karlj\source\repos\KaLENDERFINAL\KaLENDERFINAL\obj\Debug\net6.0-windows
 C:\Users\karlj\source\repos\KaLENDERFINAL\KaLENDERFINAL\obj\Debug\net6.0-windows\KaLENDERFINAL.pdb
 C:\Users\karlj\source\repos\KaLENDERFINAL\KaLENDERFINAL\obj\Debug\net6.0-windows\KaLENDERFINAL.genruntimeconfig.cache
 C:\Users\karlj\source\repos\KaLENDERFINAL\KaLENDERFINAL\obj\Debug\net6.0-windows\ref\KaLENDERFINAL.dll
+C:\Users\karlj\source\repos\KaLENDERFINAL\KaLENDERFINAL\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
+C:\Users\karlj\source\repos\KaLENDERFINAL\KaLENDERFINAL\obj\Debug\net6.0-windows\KaLENDERFINAL.csproj.CopyComplete
+C:\Users\karlj\source\repos\KaLENDERFINAL\KaLENDERFINAL\bin\Debug\net6.0-windows\HtmlAgilityPack.dll
