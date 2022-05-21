@@ -73,7 +73,7 @@ namespace KaLENDERFINAL
         }
         private void bruh(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("yeeee");
+            //MessageBox.Show("yeeee");
         }
         private void UpdateTasks(object sender)
         {
@@ -92,6 +92,8 @@ namespace KaLENDERFINAL
             if (File.Exists("data.json"))
             {
                 tasks = JsonSerializer.Deserialize<List<DailyTask>>(File.ReadAllText("data.json"));
+                //sort the things by date and stuff
+                tasks.Sort(delegate (DailyTask i, DailyTask u) { return i.Date.CompareTo(u.Date); });
             }
             
 
@@ -139,10 +141,29 @@ namespace KaLENDERFINAL
                     //WHAT DO YOU MEAN MICROSOFT THAT THERE IS NO WORKAROUND BROOOOOOOOOOOOOOO. The issue was submitted in March. MARCH
                     name.ToolTip = task.ExtendedDesc;
 
+                    ScaleTransform scale = new ScaleTransform(2.5, 2.5);
+
                     CheckBox done = new CheckBox();
-                    done.Content = task.Done;
+                    done.IsChecked = task.Done;
+                    done.Name = "done";
+                    done.Tag = task.ID;
+                    done.Width = 40;
+                    done.Height = 40;
+                    done.Margin = new Thickness(0,0,0,0);
+                    done.RenderTransform = scale;
+                    done.Checked += new RoutedEventHandler(checcer);
+                    done.Unchecked += new RoutedEventHandler(checcer);
+
                     CheckBox inProgress = new CheckBox();
-                    inProgress.Content = task.InProgress;
+                    inProgress.IsChecked = task.InProgress;
+                    inProgress.Name = "inprogress";
+                    inProgress.Tag = task.ID;
+                    inProgress.Width = 40;
+                    inProgress.Height = 40;
+                    inProgress.Margin = new Thickness(0, 0, 0, 0);
+                    inProgress.RenderTransform = scale;
+                    inProgress.Checked += new RoutedEventHandler(checcer);
+                    inProgress.Unchecked += new RoutedEventHandler(checcer);
 
                     Button editButton = new Button();
                     editButton.Content = "Muuda";
@@ -162,6 +183,11 @@ namespace KaLENDERFINAL
                     datePanel.Children.Add(stackPanel);
                 }
             }
+            Button a = new Button();
+            a.Visibility = Visibility.Hidden;
+            StackPanel e = new StackPanel();
+            e.Children.Add(a);
+            datePanel.Children.Add(e);
         }
         
 
@@ -170,6 +196,7 @@ namespace KaLENDERFINAL
         {
             MessageBox.Show("Un gran bruh momento");
         }
+
 
         //edit buttons thjings
         
@@ -191,6 +218,8 @@ namespace KaLENDERFINAL
             TextBox taskname = stackPanel.Children.OfType<TextBox>().Single(Child => Child.Name != null && Child.Name == "taskdesc");
             TextBox time = stackPanel.Children.OfType<TextBox>().Single(Child => Child.Name != null && Child.Name == "time");
             DatePicker date = stackPanel.Children.OfType<DatePicker>().Single(Child => Child.Name != null);
+            CheckBox done = stackPanel.Children.OfType<CheckBox>().Single(Child => Child.Name != null && Child.Name == "done");
+            CheckBox inprogress = stackPanel.Children.OfType<CheckBox>().Single(Child => Child.Name != null && Child.Name == "inprogress");
 
             if ((String)((Button)sender).Content=="Muuda")
             {
@@ -242,6 +271,8 @@ namespace KaLENDERFINAL
                     editTask("name", taskname.Text, (int)taskname.Tag);
                     editTask("date", (DateTime)date.SelectedDate + new TimeSpan(int.Parse(h), int.Parse(m), 0), (int)taskname.Tag);
                     obengound -= 1;
+                    done.IsEnabled = true;
+                    inprogress.IsEnabled = true;
                 }
                 catch(Exception ex)
                 {
@@ -271,6 +302,12 @@ namespace KaLENDERFINAL
                 }
                 
             }
+        }
+        private void checcer(object sender, RoutedEventArgs e)
+        {
+            CheckBox box = (CheckBox)sender;
+            editTask(box.Name, box.IsChecked, (int)box.Tag);
+            
         }
         private void addTaskButton(object sender, RoutedEventArgs e)
         {
@@ -309,10 +346,31 @@ namespace KaLENDERFINAL
             //WHAT DO YOU MEAN MICROSOFT THAT THERE IS NO WORKAROUND BROOOOOOOOOOOOOOO. The issue was submitted in March. MARCH (tooltip appears for like 2 ms and then disappears is the issue)
             name.ToolTip = "";
 
+            ScaleTransform scale = new ScaleTransform(2.5, 2.5);
+
             CheckBox done = new CheckBox();
-            done.Content = false;
+            done.IsChecked = false;
+            done.Name = "done";
+            done.IsEnabled = false;
+            done.Tag = tasks.Count + 1 + obengound;
+            done.Width = 40;
+            done.Height = 40;
+            done.Margin = new Thickness(0, 0, 0, 0);
+            done.RenderTransform = scale;
+            done.Checked += new RoutedEventHandler(checcer);
+            done.Unchecked += new RoutedEventHandler(checcer);
+
             CheckBox inProgress = new CheckBox();
-            inProgress.Content = false;
+            inProgress.IsChecked = false;
+            inProgress.Name = "inprogress";
+            inProgress.IsEnabled = false;
+            inProgress.Tag = tasks.Count + 1 + obengound;
+            inProgress.Width = 40;
+            inProgress.Height = 40;
+            inProgress.Margin = new Thickness(0, 0, 0, 0);
+            inProgress.RenderTransform = scale;
+            inProgress.Checked += new RoutedEventHandler(checcer);
+            inProgress.Unchecked += new RoutedEventHandler(checcer);
 
             Button editButton = new Button();
             editButton.Content = "Salvesta";
@@ -350,7 +408,7 @@ namespace KaLENDERFINAL
                     {
                         neww = false;
                         task.Name = (string)updated;
-                        File.WriteAllText("data.json",JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                        File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
                         //on probably parem viis selle tegemiseks, aga see on kõige lihtsam praegu
                     }
                 }
@@ -372,7 +430,7 @@ namespace KaLENDERFINAL
                         neww = false;
                         task.Date = (DateTime)updated;
                         File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
-                        
+
                     }
                 }
                 if (neww)
@@ -384,6 +442,47 @@ namespace KaLENDERFINAL
                     File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
                 }
             }
+            else if (property == "done")
+            {
+                foreach (DailyTask task in tasks)
+                {
+                    if (task.ID == id)
+                    {
+                        neww = false;
+                        task.Done = (bool)updated;
+                        File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                    }
+                }
+                if (neww)
+                {
+                    DailyTask task = new DailyTask();
+                    task.ID = id;
+                    task.Done = (bool)updated;
+                    tasks.Add(task);
+                    File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                }
+            }
+            else if (property == "inprogress")
+            {
+                foreach (DailyTask task in tasks)
+                {
+                    if (task.ID == id)
+                    {
+                        neww = false;
+                        task.InProgress = (bool)updated;
+                        File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                    }
+                }
+                if (neww)
+                {
+                    DailyTask task = new DailyTask();
+                    task.ID = id;
+                    task.InProgress = (bool)updated;
+                    tasks.Add(task);
+                    File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                }
+            }
+
             if (obengound < 2)
             {
                 UpdateTasks(Sneder);

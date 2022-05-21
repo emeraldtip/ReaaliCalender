@@ -11,12 +11,18 @@
     WindowState="Normal"
     ResizeMode="CanMinimize"
     mc:Ignorable="d">
+    <Window.Resources>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="10"/>
+        </Style>
+
+    </Window.Resources>
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                 <GradientStop Color="#f8f3da" />
-                <GradientStop Offset="1" Color="#f8f3da" />
-                <GradientStop Offset="0.178" Color="#f8f3da" />
+                <GradientStop Offset="1" Color="#f8f3ca" />
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.ColumnDefinitions>
@@ -25,44 +31,80 @@
             <ColumnDefinition Width="362*" />
             <ColumnDefinition Width="88*" />
         </Grid.ColumnDefinitions>
-        <Calendar
-            x:Name="cal"
-            Grid.ColumnSpan="2"
-            Margin="150,562,264,-163"
-            FontSize="20"
-            RenderTransformOrigin="0.5,0.5"
-            SelectedDatesChanged="Calendar_SelectedDatesChanged" Foreground="Crimson">
-            <Calendar.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="4" ScaleY="4" />
-                    <SkewTransform />
-                    <RotateTransform />
-                    <TranslateTransform X="2" Y="-5" />
-                </TransformGroup>
-            </Calendar.RenderTransform>
 
-        </Calendar>
-        <ScrollViewer CanContentScroll ="True" Grid.Column="1" Grid.ColumnSpan="3" SnapsToDevicePixels ="True" Margin="360,51,0,2" VerticalScrollBarVisibility="Auto" Name ="scroll" Height="643" Width="594">
-            <StackPanel x:Name="dateStack"
-                Grid.Column="1"
-                Grid.ColumnSpan="3"
-                Margin="0,0,0,0"
-                MouseEnter="focc"
-                GotFocus="bruh"
-                
-                Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" Height="643" Width="594" RenderTransformOrigin="0.5,0" >
-            </StackPanel>
-        </ScrollViewer>
-        <Button
-            Margin="255,26,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Click="tested"
-            Content="Test" 
-            Visibility="Hidden"
-            IsEnabled="False"/>
-        <DatePicker HorizontalAlignment="Left" Margin="-619,-358,0,0" VerticalAlignment="Top"/>
-        <Button Name="AddTaskButton" Grid.Column="2" Content="Lisa uus ülesanne" HorizontalAlignment="Left" Margin="292,21,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.549,0.641" FontSize="20" Grid.ColumnSpan="2" Click="addTaskButton" IsEnabled="False"/>
+        <TabControl Grid.ColumnSpan="4">
+            <TabItem Header="Kalender">
+                <Grid>
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Offset="1" Color="#f8f3ca" />
+                            <GradientStop Color="#f8f3da" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <Button Name="AddTaskButton" Content="Lisa uus ülesanne" HorizontalAlignment="Left" Margin="1176,646,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.549,0.641" FontSize="20" Click="addTaskButton" IsEnabled="False" Panel.ZIndex="90000"/>
+                    <Calendar
+                        x:Name="cal"
+                        Margin="-106,480,520,-81"
+                        FontSize="20"
+                        RenderTransformOrigin="0.5,0.5"
+                        SelectedDatesChanged="Calendar_SelectedDatesChanged" Foreground="Crimson">
+                        <Calendar.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="4" ScaleY="4" />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform X="2" Y="-5" />
+                            </TransformGroup>
+                        </Calendar.RenderTransform>
+
+                    </Calendar>
+                    <ScrollViewer CanContentScroll ="True" SnapsToDevicePixels ="True" Margin="723,33,-7,28" VerticalScrollBarVisibility="Auto" Name ="scroll" Height="643" Width="594" Panel.ZIndex="8999">
+                        <StackPanel x:Name="dateStack"
+                            MouseEnter="focc"
+                            GotFocus="bruh"
+                            Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" RenderTransformOrigin="0.5,0" Margin="0,0,0,0" />
+                    </ScrollViewer>
+                    <Button
+                Margin="255,26,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Click="tested"
+                Content="Test" 
+                Visibility="Hidden"
+                IsEnabled="False"/>
+                    <DatePicker HorizontalAlignment="Left" Margin="-619,-358,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Kõik ülesanded">
+                <Grid>
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <GradientStop Offset="1" Color="#f8f3ca" />
+                            <GradientStop Color="#f8f3da" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <ScrollViewer CanContentScroll ="True" SnapsToDevicePixels ="True" Margin="3,33,913,48" VerticalScrollBarVisibility="Auto" Name ="scroll1" Height="643" Width="594" Panel.ZIndex="8999">
+                        <StackPanel x:Name="unDoneStack"
+                            MouseEnter="focc"
+                            GotFocus="bruh"
+                            Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" RenderTransformOrigin="0.5,0" Margin="0,0,0,0" />
+                    </ScrollViewer>
+                    <ScrollViewer CanContentScroll ="True" SnapsToDevicePixels ="True" Margin="458,33,458,48" VerticalScrollBarVisibility="Auto" Name ="scroll2" Height="643" Width="594" Panel.ZIndex="8999">
+                        <StackPanel x:Name="progressStack"
+                            MouseEnter="focc"
+                            GotFocus="bruh"
+                            Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" RenderTransformOrigin="0.5,0" Margin="0,0,0,0" />
+                    </ScrollViewer>
+                    <ScrollViewer CanContentScroll ="True" SnapsToDevicePixels ="True" Margin="913,33,3,48" VerticalScrollBarVisibility="Auto" Name ="scroll3s" Height="643" Width="594" Panel.ZIndex="8999">
+                        <StackPanel x:Name="doneStack"
+                            MouseEnter="focc"
+                            GotFocus="bruh"
+                            Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" RenderTransformOrigin="0.5,0" Margin="0,0,0,0" />
+                    </ScrollViewer>
+                    <Button Name="AddTaskButton2" Content="Lisa uus ülesanne" HorizontalAlignment="Left" Margin="0,666,1176,-20" VerticalAlignment="Top" RenderTransformOrigin="0.549,0.641" FontSize="20" Click="addTaskButton" IsEnabled="True" Panel.ZIndex="90000"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
 
     </Grid>
 
