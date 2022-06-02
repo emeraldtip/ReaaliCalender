@@ -32,22 +32,26 @@
             <ColumnDefinition Width="88*" />
         </Grid.ColumnDefinitions>
 
-        <TabControl Grid.ColumnSpan="4">
+        <TabControl Grid.ColumnSpan="4" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Kalender">
                 <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="39*"/>
+                        <ColumnDefinition Width="301*"/>
+                    </Grid.ColumnDefinitions>
                     <Grid.Background>
                         <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                             <GradientStop Offset="1" Color="#f8f3ca" />
                             <GradientStop Color="#f8f3da" />
                         </LinearGradientBrush>
                     </Grid.Background>
-                    <Button Name="AddTaskButton" Content="Lisa uus ülesanne" HorizontalAlignment="Left" Margin="1176,646,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.549,0.641" FontSize="20" Click="addTaskButton" IsEnabled="False" Panel.ZIndex="90000"/>
+                    <Button Name="AddTaskButton" Content="Lisa uus ülesanne" HorizontalAlignment="Left" Margin="1020,646,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.549,0.641" FontSize="20" Click="addTaskButton" IsEnabled="False" Panel.ZIndex="90000" Grid.Column="1"/>
                     <Calendar
                         x:Name="cal"
                         Margin="-106,480,520,-81"
                         FontSize="20"
                         RenderTransformOrigin="0.5,0.5"
-                        SelectedDatesChanged="Calendar_SelectedDatesChanged" Foreground="Crimson">
+                        SelectedDatesChanged="Calendar_SelectedDatesChanged" Foreground="Crimson" Grid.ColumnSpan="2">
                         <Calendar.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform ScaleX="4" ScaleY="4" />
@@ -58,20 +62,20 @@
                         </Calendar.RenderTransform>
 
                     </Calendar>
-                    <ScrollViewer CanContentScroll ="True" SnapsToDevicePixels ="True" Margin="723,33,-7,28" VerticalScrollBarVisibility="Auto" Name ="scroll" Height="643" Width="594" Panel.ZIndex="8999">
+                    <ScrollViewer CanContentScroll ="True" SnapsToDevicePixels ="True" Margin="592,43,18,38" VerticalScrollBarVisibility="Auto" Name ="scroll" Height="643" Width="594" Panel.ZIndex="8999" Grid.Column="1">
                         <StackPanel x:Name="dateStack"
                             MouseEnter="focc"
                             GotFocus="bruh"
                             Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" RenderTransformOrigin="0.5,0" Margin="0,0,0,0" />
                     </ScrollViewer>
                     <Button
-                Margin="255,26,0,0"
+                Margin="99,26,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Click="tested"
                 Content="Test" 
                 Visibility="Hidden"
-                IsEnabled="False"/>
+                IsEnabled="False" Grid.Column="1"/>
                     <DatePicker HorizontalAlignment="Left" Margin="-619,-358,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
@@ -102,6 +106,11 @@
                             Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" RenderTransformOrigin="0.5,0" Margin="0,0,0,0" />
                     </ScrollViewer>
                     <Button Name="AddTaskButton2" Content="Lisa uus ülesanne" HorizontalAlignment="Left" Margin="0,666,1176,-20" VerticalAlignment="Top" RenderTransformOrigin="0.549,0.641" FontSize="20" Click="addTaskButton" IsEnabled="True" Panel.ZIndex="90000"/>
+                    <DatePicker x:Name="StartDate" HorizontalAlignment="Left" Margin="118,4,0,0" VerticalAlignment="Top" SelectedDateChanged="Chang"/>
+                    <DatePicker x:Name="EndDate" HorizontalAlignment="Left" Margin="246,4,0,0" VerticalAlignment="Top" SelectedDateChanged="Chang"/>
+                    <Label Content="―" HorizontalAlignment="Left" Margin="221,2,0,0" VerticalAlignment="Top"/>
+                    <Label Content="" HorizontalAlignment="Left" Margin="10,4,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Ajavahemik:" HorizontalAlignment="Left" Margin="-1,-3,0,0" VerticalAlignment="Top" FontSize="20"/>
                 </Grid>
             </TabItem>
         </TabControl>

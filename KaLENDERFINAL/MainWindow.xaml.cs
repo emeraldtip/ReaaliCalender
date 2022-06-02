@@ -97,7 +97,6 @@ namespace KaLENDERFINAL
             }
             
 
-            DailyTask currentTask;
             //this may be a bad Idea
             //too bad
             foreach (DailyTask task in tasks)
@@ -106,7 +105,6 @@ namespace KaLENDERFINAL
                 if (task.Date.ToShortDateString() == calendar.SelectedDate.Value.Date.ToShortDateString())
                 {
                      //siia toppida mingi canvas koos mitme tekstivälja ja kahe checkboxiga
-                    currentTask = task;
                     DatePicker date = new DatePicker();
                     date.SelectedDate = task.Date;
                     date.FontSize = 20;
@@ -505,6 +503,120 @@ namespace KaLENDERFINAL
             //and write that into a file
             File.WriteAllText("data.json",JsonSerializer.Serialize<List<DailyTask>>(tasks));
             UpdateTasks(Sneder);
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if ((string)((TabItem)((TabControl)sender).SelectedItem).Header == "Kõik ülesanded")
+            {
+                MessageBox.Show("bruh moetn");
+            }
+        }
+
+        private void Chang(object sender, SelectionChangedEventArgs ee)
+        {
+            if (((DatePicker)this.FindName("StartDate")).SelectedDate != null && ((DatePicker)this.FindName("EndDate")).SelectedDate != null)
+            {
+                refreshTrello();
+            }
+        }
+
+        //yes I'm using the name of another todo app
+        private void refreshTrello()
+        {
+            for (DateTime dt = (DateTime)((DatePicker)this.FindName("StartDate")).SelectedDate.Value; dt <= (DateTime)((DatePicker)this.FindName("EndDate")).SelectedDate.Value; dt = dt.AddDays(1))
+            {
+                foreach (DailyTask task in tasks)
+                {
+                    if (task.Date.ToShortDateString() == dt.Date.ToShortDateString())
+                    {
+                        //siia toppida mingi canvas koos mitme tekstivälja ja kahe checkboxiga
+                        DatePicker date = new DatePicker();
+                        date.SelectedDate = task.Date;
+                        date.FontSize = 20;
+                        date.Width = 150;
+                        date.Tag = task.Date;
+                        date.Name = "no";
+                        date.SelectedDateChanged += this.dateChanged;
+
+                        TextBox time = new TextBox();
+                        time.Text = task.Date.ToShortTimeString();
+                        time.FontSize = 20;
+                        time.Name = "time";
+                        time.Tag = time.Text;
+                        time.Width = 55;
+                        time.IsReadOnly = true;
+
+                        TextBox name = new TextBox();
+                        name.IsReadOnly = true;
+                        name.Text = task.Name;
+                        name.FontSize = 20;
+                        name.Name = "taskdesc";
+                        name.Tag = task.ID;
+                        //increase this if needed
+                        name.Width = 200;
+                        //trigger and setter cancer that is not even used
+                        /*
+                        Trigger t = new Trigger();
+                        t.Property = UIElement.IsMouseOverProperty;
+                        t.Value = false;
+                        name.Triggers.Add(t);
+                        */
+                        //WHAT DO YOU MEAN MICROSOFT THAT THERE IS NO WORKAROUND BROOOOOOOOOOOOOOO. The issue was submitted in March. MARCH
+                        name.ToolTip = task.ExtendedDesc;
+
+                        ScaleTransform scale = new ScaleTransform(2.5, 2.5);
+
+                        Button editButton = new Button();
+                        editButton.Content = "Muuda";
+                        editButton.Margin = new Thickness(5, 0, 0, 0);
+                        editButton.Click += new RoutedEventHandler(Button_Click);
+
+
+                        StackPanel stackPanel = new StackPanel();
+                        stackPanel.Orientation = Orientation.Horizontal;
+                        stackPanel.Children.Add(date);
+                        stackPanel.Children.Add(time);
+                        stackPanel.Children.Add(name);
+                        stackPanel.Children.Add(editButton);
+
+                        if (task.Done)
+                        {
+                            ((StackPanel)this.FindName("doneStack")).Children.Add(stackPanel);
+                        }
+                        else if (task.InProgress)
+                        {
+                            ((StackPanel)this.FindName("progressStack")).Children.Add(stackPanel);
+                        }
+                        else
+                        {
+                            ((StackPanel)this.FindName("unDoneStack")).Children.Add(stackPanel);
+                        }
+                    }
+                }
+            
+           
+            }
+            //this is for better visiblity in the stackpanel
+            //Also I think there's a better way of doing this but my 5 min googling didn't turn up anything useful
+
+            Button a = new Button();
+            a.Visibility = Visibility.Hidden;
+            StackPanel e = new StackPanel();
+            e.Children.Add(a);
+            ((StackPanel)this.FindName("doneStack")).Children.Add(e);
+
+            Button b = new Button();
+            b.Visibility = Visibility.Hidden;
+            StackPanel f = new StackPanel();
+            e.Children.Add(b);
+            ((StackPanel)this.FindName("progressStack")).Children.Add(f);
+
+            Button c = new Button();
+            c.Visibility = Visibility.Hidden;
+            StackPanel g = new StackPanel();
+            g.Children.Add(c);
+            ((StackPanel)this.FindName("unDoneStack")).Children.Add(g);
         }
     }
 }
