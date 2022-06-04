@@ -32,7 +32,7 @@
             <ColumnDefinition Width="88*" />
         </Grid.ColumnDefinitions>
 
-        <TabControl Grid.ColumnSpan="4" SelectionChanged="TabControl_SelectionChanged">
+        <TabControl x:Name="DabGondrol" Grid.ColumnSpan="4" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Kalender">
                 <Grid>
                     <Grid.ColumnDefinitions>

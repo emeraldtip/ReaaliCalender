@@ -27,17 +27,15 @@ namespace KaLENDERFINAL
         private int obengound = 0;
         private object Sneder;
         private List<DailyTask> tasks = new List<DailyTask>();
-        public string fname = "data.json";
-        public string data = "[{\"ID\":0,\"Date\":\"2069-06-09T15:21:50.1551516+03:00\",\"Name\":\"\",\"ExtendedDesc\":\"\",\"Done\":false,\"NoDo\":false}]";
         public MainWindow()
         {
-         InitializeComponent();
-            
-            if (File.Exists(fname))
+            InitializeComponent();
+            if (File.Exists("data.json"))
             {
-                data = File.ReadAllText(fname);
+                tasks = JsonSerializer.Deserialize<List<DailyTask>>(File.ReadAllText("data.json"));
+                //sort the things by date and stuff
+                tasks.Sort(delegate (DailyTask i, DailyTask u) { return i.Date.CompareTo(u.Date); });
             }
-            
             //dateGrid.
         }
         //data formatting:
@@ -82,7 +80,7 @@ namespace KaLENDERFINAL
             //Get reference. (an anime one perhaps?) (no.)
             var calendar = sender as Calendar;
             //See if a date is selected. (what if no eyes doe)
-            if (calendar.SelectedDate.HasValue)
+            if (calendar.SelectedDate != null)
             {
                 ((Button)this.FindName("AddTaskButton")).IsEnabled = true;
                 DateTime date = calendar.SelectedDate.Value;
@@ -216,8 +214,14 @@ namespace KaLENDERFINAL
             TextBox taskname = stackPanel.Children.OfType<TextBox>().Single(Child => Child.Name != null && Child.Name == "taskdesc");
             TextBox time = stackPanel.Children.OfType<TextBox>().Single(Child => Child.Name != null && Child.Name == "time");
             DatePicker date = stackPanel.Children.OfType<DatePicker>().Single(Child => Child.Name != null);
-            CheckBox done = stackPanel.Children.OfType<CheckBox>().Single(Child => Child.Name != null && Child.Name == "done");
-            CheckBox inprogress = stackPanel.Children.OfType<CheckBox>().Single(Child => Child.Name != null && Child.Name == "inprogress");
+            CheckBox done = new CheckBox();
+            CheckBox inprogress = new CheckBox();
+            if ((string)((TabItem)((TabControl)this.FindName("DabGondrol")).SelectedItem).Header != "Kõik ülesanded")
+            {
+                done = stackPanel.Children.OfType<CheckBox>().Single(Child => Child.Name != null && Child.Name == "done");
+                inprogress = stackPanel.Children.OfType<CheckBox>().Single(Child => Child.Name != null && Child.Name == "inprogress");
+            }
+            
 
             if ((String)((Button)sender).Content=="Muuda")
             {
@@ -285,7 +289,15 @@ namespace KaLENDERFINAL
                 Button saveButton = (Button)stackPanel.Children.OfType<Button>().Single(Child => Child.Content != null && (string)Child.Content == "Salvesta");
                 if (saveButton.Tag == null)
                 {
-                    ((StackPanel)this.FindName("dateStack")).Children.Remove(stackPanel);
+                    if ((string)((TabItem)((TabControl)this.FindName("DabGondrol")).SelectedItem).Header != "Kõik ülesanded")
+                    {
+                        ((StackPanel)this.FindName("dateStack")).Children.Remove(stackPanel);
+                    }
+                    else
+                    {
+                        ((StackPanel)this.FindName("unDoneStack")).Children.Remove(stackPanel);
+                    }
+                        
                 }
                 else
                 {
@@ -313,12 +325,22 @@ namespace KaLENDERFINAL
         }
         private void addTask()
         {
-            
+            //this certainly looks ugly
             StackPanel datePanel = (StackPanel)this.FindName("dateStack");
-            Calendar cal = (Calendar)this.FindName("cal");
-
             DatePicker date = new DatePicker();
-            date.SelectedDate = cal.SelectedDate.Value;
+
+            if ((string)((TabItem)((TabControl)this.FindName("DabGondrol")).SelectedItem).Header == "Kõik ülesanded")
+            {
+                datePanel = (StackPanel)this.FindName("unDoneStack");
+                date.SelectedDate = DateTime.Today;
+            }
+            else
+            {
+                Calendar cal = (Calendar)this.FindName("cal");
+                date.SelectedDate = cal.SelectedDate.Value;
+            }
+            
+
             date.FontSize = 20;
             date.Width = 150;
             date.Tag = cal.SelectedDate;
@@ -337,9 +359,9 @@ namespace KaLENDERFINAL
             name.Text = "";
             name.FontSize = 20;
             name.Name = "taskdesc";
-            name.Tag = tasks.Count + 1 + obengound;
-            //increase this if needed
-            name.Width = 200;
+            name.Tag = tasks.Count + 2 + obengound;
+
+            name.Width = 130;
 
             //WHAT DO YOU MEAN MICROSOFT THAT THERE IS NO WORKAROUND BROOOOOOOOOOOOOOO. The issue was submitted in March. MARCH (tooltip appears for like 2 ms and then disappears is the issue)
             name.ToolTip = "";
@@ -347,28 +369,34 @@ namespace KaLENDERFINAL
             ScaleTransform scale = new ScaleTransform(2.5, 2.5);
 
             CheckBox done = new CheckBox();
-            done.IsChecked = false;
-            done.Name = "done";
-            done.IsEnabled = false;
-            done.Tag = tasks.Count + 1 + obengound;
-            done.Width = 40;
-            done.Height = 40;
-            done.Margin = new Thickness(0, 0, 0, 0);
-            done.RenderTransform = scale;
-            done.Checked += new RoutedEventHandler(checcer);
-            done.Unchecked += new RoutedEventHandler(checcer);
-
             CheckBox inProgress = new CheckBox();
-            inProgress.IsChecked = false;
-            inProgress.Name = "inprogress";
-            inProgress.IsEnabled = false;
-            inProgress.Tag = tasks.Count + 1 + obengound;
-            inProgress.Width = 40;
-            inProgress.Height = 40;
-            inProgress.Margin = new Thickness(0, 0, 0, 0);
-            inProgress.RenderTransform = scale;
-            inProgress.Checked += new RoutedEventHandler(checcer);
-            inProgress.Unchecked += new RoutedEventHandler(checcer);
+            if (datePanel.Name != "unDoneStack")
+            {
+                //increase this if needed
+                name.Width = 200;
+
+                done.IsChecked = false;
+                done.Name = "done";
+                done.IsEnabled = false;
+                done.Tag = tasks.Count + 2 + obengound;
+                done.Width = 40;
+                done.Height = 40;
+                done.Margin = new Thickness(0, 0, 0, 0);
+                done.RenderTransform = scale;
+                done.Checked += new RoutedEventHandler(checcer);
+                done.Unchecked += new RoutedEventHandler(checcer);
+
+                inProgress.IsChecked = false;
+                inProgress.Name = "inprogress";
+                inProgress.IsEnabled = false;
+                inProgress.Tag = tasks.Count + 2 + obengound;
+                inProgress.Width = 40;
+                inProgress.Height = 40;
+                inProgress.Margin = new Thickness(0, 0, 0, 0);
+                inProgress.RenderTransform = scale;
+                inProgress.Checked += new RoutedEventHandler(checcer);
+                inProgress.Unchecked += new RoutedEventHandler(checcer);
+            }
 
             Button editButton = new Button();
             editButton.Content = "Salvesta";
@@ -386,8 +414,15 @@ namespace KaLENDERFINAL
             stackPanel.Children.Add(date);
             stackPanel.Children.Add(time);
             stackPanel.Children.Add(name);
-            stackPanel.Children.Add(done);
-            stackPanel.Children.Add(inProgress);
+
+            //I could have put both of them in the same if statement but I want to keep the structure
+
+            if (datePanel.Name != "unDoneStack")
+            {
+                stackPanel.Children.Add(done);
+                stackPanel.Children.Add(inProgress);
+            }
+                
             stackPanel.Children.Add(editButton);
             stackPanel.Children.Add(cancel);
 
@@ -483,7 +518,18 @@ namespace KaLENDERFINAL
 
             if (obengound < 2)
             {
-                UpdateTasks(Sneder);
+                if ((string)((TabItem)((TabControl)this.FindName("DabGondrol")).SelectedItem).Header != "Kõik ülesanded")
+                {
+                    UpdateTasks(Sneder);
+                }
+                else
+                {
+                    if (((DatePicker)this.FindName("StartDate")).SelectedDate != null && ((DatePicker)this.FindName("EndDate")).SelectedDate != null)
+                    {
+                        refreshTrello();
+                    }
+                }
+                    
             }
         } 
 
@@ -498,7 +544,7 @@ namespace KaLENDERFINAL
             dailyTask.Done = false;
             dailyTask.InProgress = false;
             dailyTask.ID = tasks.Count + 1;
-            //drop that into a list
+            //drop tt into a list
             tasks.Add(dailyTask);
             //and write that into a file
             File.WriteAllText("data.json",JsonSerializer.Serialize<List<DailyTask>>(tasks));
@@ -509,7 +555,10 @@ namespace KaLENDERFINAL
         {
             if ((string)((TabItem)((TabControl)sender).SelectedItem).Header == "Kõik ülesanded")
             {
-                MessageBox.Show("bruh moetn");
+                if (((DatePicker)this.FindName("StartDate")).SelectedDate != null && ((DatePicker)this.FindName("EndDate")).SelectedDate != null)
+                {
+                    refreshTrello();
+                }
             }
         }
 
@@ -524,6 +573,10 @@ namespace KaLENDERFINAL
         //yes I'm using the name of another todo app
         private void refreshTrello()
         {
+            ((StackPanel)this.FindName("doneStack")).Children.Clear();
+            ((StackPanel)this.FindName("unDoneStack")).Children.Clear();
+            ((StackPanel)this.FindName("progressStack")).Children.Clear();
+
             for (DateTime dt = (DateTime)((DatePicker)this.FindName("StartDate")).SelectedDate.Value; dt <= (DateTime)((DatePicker)this.FindName("EndDate")).SelectedDate.Value; dt = dt.AddDays(1))
             {
                 foreach (DailyTask task in tasks)
@@ -554,7 +607,7 @@ namespace KaLENDERFINAL
                         name.Name = "taskdesc";
                         name.Tag = task.ID;
                         //increase this if needed
-                        name.Width = 200;
+                        name.Width = 130;
                         //trigger and setter cancer that is not even used
                         /*
                         Trigger t = new Trigger();
