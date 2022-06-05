@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Data;
+using HtmlAgilityPack;
 
 namespace KaLENDERFINAL
 {
@@ -24,9 +25,12 @@ namespace KaLENDERFINAL
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private DragDropEffects notAllowed;
+        private StackPanel draggable;
         private int obengound = 0;
         private object Sneder;
-        private List<DailyTask> tasks = new List<DailyTask>();
+        public static List<DailyTask> tasks = new List<DailyTask>();
         public MainWindow()
         {
             InitializeComponent();
@@ -35,6 +39,12 @@ namespace KaLENDERFINAL
                 tasks = JsonSerializer.Deserialize<List<DailyTask>>(File.ReadAllText("data.json"));
                 //sort the things by date and stuff
                 tasks.Sort(delegate (DailyTask i, DailyTask u) { return i.Date.CompareTo(u.Date); });
+
+            }
+            if (!File.Exists("data2.json"))
+            {
+                InitialWizard initialWizard = new InitialWizard();
+                initialWizard.ShowDialog();
             }
             //dateGrid.
         }
@@ -47,13 +57,14 @@ namespace KaLENDERFINAL
          * Task done
          * In progress
         */
-        private class DailyTask
+        public class DailyTask
         {
             public int ID { get; set; }
             public DateTime Date { get; set; }
             public string Name { get; set; }
             //ma vihkan warninguid soooo
             #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+            //see on nyyd unused sest selle muutmise implementeerimine oleks olnud väga janky
             public string? ExtendedDesc { get; set; }
             #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             public bool Done { get; set; }
@@ -97,93 +108,103 @@ namespace KaLENDERFINAL
 
             //this may be a bad Idea
             //too bad
-            foreach (DailyTask task in tasks)
+            if (calendar.SelectedDate != null)
             {
-
-                if (task.Date.ToShortDateString() == calendar.SelectedDate.Value.Date.ToShortDateString())
+                foreach (DailyTask task in tasks)
                 {
-                     //siia toppida mingi canvas koos mitme tekstivälja ja kahe checkboxiga
-                    DatePicker date = new DatePicker();
-                    date.SelectedDate = task.Date;
-                    date.FontSize = 20;
-                    date.Width = 150; 
-                    date.Tag = task.Date;
-                    date.Name = "no";
-                    date.SelectedDateChanged += this.dateChanged;
 
-                    TextBox time = new TextBox();
-                    time.Text = task.Date.ToShortTimeString();
-                    time.FontSize = 20;
-                    time.Name = "time";
-                    time.Tag = time.Text;
-                    time.Width = 55;
-                    time.IsReadOnly = true; 
+                    if (task.Date.ToShortDateString() == calendar.SelectedDate.Value.Date.ToShortDateString())
+                    {
+                        //siia toppida mingi canvas koos mitme tekstivälja ja kahe checkboxiga
+                        DatePicker date = new DatePicker();
+                        date.SelectedDate = task.Date;
+                        date.FontSize = 20;
+                        date.Width = 150;
+                        date.Tag = task.Date;
+                        date.Name = "no";
+                        date.SelectedDateChanged += this.dateChanged;
 
-                    TextBox name = new TextBox();
-                    name.IsReadOnly = true;
-                    name.Text = task.Name;
-                    name.FontSize = 20;
-                    name.Name = "taskdesc";
-                    name.Tag = task.ID;
-                    //increase this if needed
-                    name.Width = 200;
-                    //trigger and setter cancer that is not even used
-                    /*
-                    Trigger t = new Trigger();
-                    t.Property = UIElement.IsMouseOverProperty;
-                    t.Value = false;
-                    name.Triggers.Add(t);
-                    */
-                    //WHAT DO YOU MEAN MICROSOFT THAT THERE IS NO WORKAROUND BROOOOOOOOOOOOOOO. The issue was submitted in March. MARCH
-                    name.ToolTip = task.ExtendedDesc;
+                        TextBox time = new TextBox();
+                        time.Text = task.Date.ToShortTimeString();
+                        time.FontSize = 20;
+                        time.Name = "time";
+                        time.Tag = time.Text;
+                        time.Width = 55;
+                        time.IsReadOnly = true;
 
-                    ScaleTransform scale = new ScaleTransform(2.5, 2.5);
+                        TextBox name = new TextBox();
+                        name.IsReadOnly = true;
+                        name.Text = task.Name;
+                        name.FontSize = 20;
+                        name.Name = "taskdesc";
+                        name.Tag = task.ID;
+                        //increase this if needed
+                        name.Width = 200;
+                        //trigger and setter cancer that is not even used
+                        /*
+                        Trigger t = new Trigger();
+                        t.Property = UIElement.IsMouseOverProperty;
+                        t.Value = false;
+                        name.Triggers.Add(t);
+                        */
+                        //WHAT DO YOU MEAN MICROSOFT THAT THERE IS NO WORKAROUND BROOOOOOOOOOOOOOO. The issue was submitted in March. MARCH
+                        //name.ToolTip = task.ExtendedDesc;
 
-                    CheckBox done = new CheckBox();
-                    done.IsChecked = task.Done;
-                    done.Name = "done";
-                    done.Tag = task.ID;
-                    done.Width = 40;
-                    done.Height = 40;
-                    done.Margin = new Thickness(0,0,0,0);
-                    done.RenderTransform = scale;
-                    done.Checked += new RoutedEventHandler(checcer);
-                    done.Unchecked += new RoutedEventHandler(checcer);
+                        ScaleTransform scale = new ScaleTransform(2.5, 2.5);
 
-                    CheckBox inProgress = new CheckBox();
-                    inProgress.IsChecked = task.InProgress;
-                    inProgress.Name = "inprogress";
-                    inProgress.Tag = task.ID;
-                    inProgress.Width = 40;
-                    inProgress.Height = 40;
-                    inProgress.Margin = new Thickness(0, 0, 0, 0);
-                    inProgress.RenderTransform = scale;
-                    inProgress.Checked += new RoutedEventHandler(checcer);
-                    inProgress.Unchecked += new RoutedEventHandler(checcer);
+                        CheckBox done = new CheckBox();
+                        done.IsChecked = task.Done;
+                        done.Name = "done";
+                        done.Tag = task.ID;
+                        done.Width = 40;
+                        done.Height = 40;
+                        done.Margin = new Thickness(0, 0, 0, 0);
+                        done.RenderTransform = scale;
+                        done.Checked += new RoutedEventHandler(checcer);
+                        done.Unchecked += new RoutedEventHandler(checcer);
 
-                    Button editButton = new Button();
-                    editButton.Content = "Muuda";
-                    editButton.Margin = new Thickness(5, 0, 0, 0);
-                    editButton.Click += new RoutedEventHandler(Button_Click);
+                        CheckBox inProgress = new CheckBox();
+                        inProgress.IsChecked = task.InProgress;
+                        inProgress.Name = "inprogress";
+                        inProgress.Tag = task.ID;
+                        inProgress.Width = 40;
+                        inProgress.Height = 40;
+                        inProgress.Margin = new Thickness(0, 0, 0, 0);
+                        inProgress.RenderTransform = scale;
+                        inProgress.Checked += new RoutedEventHandler(checcer);
+                        inProgress.Unchecked += new RoutedEventHandler(checcer);
 
+                        Button editButton = new Button();
+                        editButton.Content = "Muuda";
+                        editButton.Margin = new Thickness(5, 0, 0, 0);
+                        editButton.Click += new RoutedEventHandler(Button_Click);
 
-                    StackPanel stackPanel = new StackPanel();
-                    stackPanel.Orientation = Orientation.Horizontal;
-                    stackPanel.Children.Add(date);
-                    stackPanel.Children.Add(time);
-                    stackPanel.Children.Add(name);
-                    stackPanel.Children.Add(done);
-                    stackPanel.Children.Add(inProgress);
-                    stackPanel.Children.Add(editButton);
+                        Button removeButton = new Button();
+                        removeButton.Content = "Eemalda";
+                        removeButton.Margin = new Thickness(0, 0, 0, 0);
+                        removeButton.Tag= task.ID;
+                        removeButton.Click += new RoutedEventHandler(removeClick);
 
-                    datePanel.Children.Add(stackPanel);
+                        StackPanel stackPanel = new StackPanel();
+                        stackPanel.Orientation = Orientation.Horizontal;
+                        stackPanel.Children.Add(date);
+                        stackPanel.Children.Add(time);
+                        stackPanel.Children.Add(name);
+                        stackPanel.Children.Add(done);
+                        stackPanel.Children.Add(inProgress);
+                        stackPanel.Children.Add(editButton);
+                        stackPanel.Children.Add(removeButton);
+
+                        datePanel.Children.Add(stackPanel);
+                    }
                 }
+                Button a = new Button();
+                a.Visibility = Visibility.Hidden;
+                StackPanel e = new StackPanel();
+                e.Children.Add(a);
+                datePanel.Children.Add(e);
             }
-            Button a = new Button();
-            a.Visibility = Visibility.Hidden;
-            StackPanel e = new StackPanel();
-            e.Children.Add(a);
-            datePanel.Children.Add(e);
+            
         }
         
 
@@ -204,6 +225,29 @@ namespace KaLENDERFINAL
                 picker.SelectedDate = (DateTime)picker.Tag;
             }
         }
+        private void removeClick(object sender, RoutedEventArgs e)
+        {
+            foreach (DailyTask task in tasks)
+            {
+                if (task.ID == (int)((Button)sender).Tag)
+                {
+                    tasks.Remove(task);
+                    File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                    //same thing wiht this thing I did this in a really weird way before
+                    UpdateTasks(this.FindName("cal"));
+                    ((Button)sender).Background = Brushes.Red;
+                    if ((string)((TabItem)((TabControl)this.FindName("DabGondrol")).SelectedItem).Header == "Kõik ülesanded")
+                    {
+                        if (((DatePicker)this.FindName("StartDate")).SelectedDate != null && ((DatePicker)this.FindName("EndDate")).SelectedDate != null)
+                        {
+                            refreshTrello();
+                        }
+                    }
+                    return;
+                }
+            }
+
+        }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             StackPanel stackPanel = (StackPanel)((Button)sender).Parent;
@@ -216,6 +260,13 @@ namespace KaLENDERFINAL
             DatePicker date = stackPanel.Children.OfType<DatePicker>().Single(Child => Child.Name != null);
             CheckBox done = new CheckBox();
             CheckBox inprogress = new CheckBox();
+            Button rembutton = new Button();
+            try
+            {
+                rembutton = stackPanel.Children.OfType<Button>().Single(Child => Child.Content != null && (string)Child.Content == "Eemalda");
+            }
+            catch (Exception) {}
+            
             if ((string)((TabItem)((TabControl)this.FindName("DabGondrol")).SelectedItem).Header != "Kõik ülesanded")
             {
                 done = stackPanel.Children.OfType<CheckBox>().Single(Child => Child.Name != null && Child.Name == "done");
@@ -225,6 +276,11 @@ namespace KaLENDERFINAL
 
             if ((String)((Button)sender).Content=="Muuda")
             {
+                try
+                {
+                    stackPanel.Children.Remove(rembutton);
+                }
+                catch (Exception) { }
                 date.Name = "yes";
                 taskname.IsReadOnly = false;
                 time.IsReadOnly = false;
@@ -241,7 +297,6 @@ namespace KaLENDERFINAL
             else if ((String)((Button)sender).Content=="Salvesta")
             {
                 string h, m;
-                #pragma warning disable CS0168 // Variable is declared but never used
                 try
                 {    
                     if (!time.Text.Contains(':'))
@@ -275,13 +330,26 @@ namespace KaLENDERFINAL
                     obengound -= 1;
                     done.IsEnabled = true;
                     inprogress.IsEnabled = true;
+                    if ((string)((TabItem)((TabControl)this.FindName("DabGondrol")).SelectedItem).Header == "Kõik ülesanded" && ((DatePicker)this.FindName("StartDate")).SelectedDate == null && ((DatePicker)this.FindName("EndDate")).SelectedDate == null)
+                    {
+                        ((DatePicker)this.FindName("StartDate")).SelectedDate = date.SelectedDate;
+                        ((DatePicker)this.FindName("EndDate")).SelectedDate = date.SelectedDate;
+                    }
+
+                    Button removeButton = new Button();
+                    removeButton.Content = "Eemalda";
+                    removeButton.Margin = new Thickness(0, 0, 0, 0);
+                    removeButton.Tag = taskname.Tag;
+                    removeButton.Click += new RoutedEventHandler(removeClick);
+                    stackPanel.Children.Add(removeButton);
+
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     MessageBox.Show("Incorrect time format. Correct format: (hour):(minute)", "Input error", MessageBoxButton.OK, MessageBoxImage.Error);
                     //MessageBox.Show(ex.Message + ex.Source); 
                 }
-                #pragma warning restore CS0168 // Variable is declared but never used
+                
                 
             }
             else if ((String)((Button)sender).Content == "Tühista")
@@ -309,6 +377,13 @@ namespace KaLENDERFINAL
                     saveButton.Tag = "";
                     stackPanel.Children.Remove((Button)sender);
                     obengound -= 1;
+
+                    Button removeButton = new Button();
+                    removeButton.Content = "Eemalda";
+                    removeButton.Margin = new Thickness(0, 0, 0, 0);
+                    removeButton.Tag = taskname.Tag;
+                    removeButton.Click += new RoutedEventHandler(removeClick);
+                    stackPanel.Children.Add(removeButton);
                 }
                 
             }
@@ -483,6 +558,7 @@ namespace KaLENDERFINAL
                     {
                         neww = false;
                         task.Done = (bool)updated;
+                        task.InProgress = false;
                         File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
                     }
                 }
@@ -491,6 +567,7 @@ namespace KaLENDERFINAL
                     DailyTask task = new DailyTask();
                     task.ID = id;
                     task.Done = (bool)updated;
+                    task.InProgress = false;
                     tasks.Add(task);
                     File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
                 }
@@ -503,6 +580,7 @@ namespace KaLENDERFINAL
                     {
                         neww = false;
                         task.InProgress = (bool)updated;
+                        task.Done = false;
                         File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
                     }
                 }
@@ -511,6 +589,7 @@ namespace KaLENDERFINAL
                     DailyTask task = new DailyTask();
                     task.ID = id;
                     task.InProgress = (bool)updated;
+                    task.Done = false;
                     tasks.Add(task);
                     File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
                 }
@@ -540,7 +619,7 @@ namespace KaLENDERFINAL
             DailyTask dailyTask = new DailyTask();  
             dailyTask.Date = DateTime.Now;
             dailyTask.Name = "Magama";
-            dailyTask.ExtendedDesc = "Go to slep lol";
+            //dailyTask.ExtendedDesc = "Go to slep lol";
             dailyTask.Done = false;
             dailyTask.InProgress = false;
             dailyTask.ID = tasks.Count + 1;
@@ -559,6 +638,10 @@ namespace KaLENDERFINAL
                 {
                     refreshTrello();
                 }
+            }
+            else
+            {
+                UpdateTasks((Calendar)this.FindName("cal"));
             }
         }
 
@@ -583,7 +666,10 @@ namespace KaLENDERFINAL
                 {
                     if (task.Date.ToShortDateString() == dt.Date.ToShortDateString())
                     {
-                        //siia toppida mingi canvas koos mitme tekstivälja ja kahe checkboxiga
+                        Label mover = new Label();
+                        mover.Content = "≡";
+                        mover.MouseDown += new MouseButtonEventHandler(dragMouseDown);
+
                         DatePicker date = new DatePicker();
                         date.SelectedDate = task.Date;
                         date.FontSize = 20;
@@ -616,22 +702,30 @@ namespace KaLENDERFINAL
                         name.Triggers.Add(t);
                         */
                         //WHAT DO YOU MEAN MICROSOFT THAT THERE IS NO WORKAROUND BROOOOOOOOOOOOOOO. The issue was submitted in March. MARCH
-                        name.ToolTip = task.ExtendedDesc;
+                        ///name.ToolTip = task.ExtendedDesc;
 
                         ScaleTransform scale = new ScaleTransform(2.5, 2.5);
 
                         Button editButton = new Button();
                         editButton.Content = "Muuda";
-                        editButton.Margin = new Thickness(5, 0, 0, 0);
+                        editButton.Margin = new Thickness(0, 0, 0, 0);
                         editButton.Click += new RoutedEventHandler(Button_Click);
 
+                        Button removeButton = new Button();
+                        removeButton.Content = "Eemalda";
+                        removeButton.Margin = new Thickness(0, 0, 0, 0);
+                        removeButton.Tag = task.ID;
+                        removeButton.Click += new RoutedEventHandler(removeClick);
 
                         StackPanel stackPanel = new StackPanel();
                         stackPanel.Orientation = Orientation.Horizontal;
+                        stackPanel.Children.Add(mover);
                         stackPanel.Children.Add(date);
                         stackPanel.Children.Add(time);
                         stackPanel.Children.Add(name);
                         stackPanel.Children.Add(editButton);
+                        stackPanel.Children.Add(removeButton);
+
 
                         if (task.Done)
                         {
@@ -671,5 +765,110 @@ namespace KaLENDERFINAL
             g.Children.Add(c);
             ((StackPanel)this.FindName("unDoneStack")).Children.Add(g);
         }
+
+        void dragMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (draggable == null)
+            {
+                StackPanel dragParent = (StackPanel)((StackPanel)((Label)sender).Parent).Parent;
+                draggable = (StackPanel)((Label)sender).Parent;
+                dragParent.Children.Remove(draggable);
+
+                ((Canvas)this.FindName("TrelloCanv")).Children.Add(draggable);
+                
+                notAllowed = DragDrop.DoDragDrop(draggable, draggable, DragDropEffects.Move);
+
+                if (notAllowed == DragDropEffects.None)
+                {
+                    ((Canvas)this.FindName("TrelloCanv")).Children.Remove(draggable);
+                    dragParent.Children.Add(draggable);
+                    draggable = null;
+                    ((StackPanel)this.FindName("doneStack")).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffe1");
+                    ((StackPanel)this.FindName("progressStack")).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffe1");
+                    ((StackPanel)this.FindName("unDoneStack")).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffe1");
+                }
+            }
+        }
+        void dragMouseDrop(object sender, DragEventArgs e)
+        {
+            if (!((StackPanel)sender).Children.Contains(draggable))
+            {
+                ((Canvas)this.FindName("TrelloCanv")).Children.Remove(draggable);
+                ((StackPanel)sender).Children.Add(draggable);
+            }
+            
+            TextBox namebox = (TextBox)draggable.Children.OfType<TextBox>().Single(Child => Child.Name != null && (string)Child.Name == "taskdesc");
+            draggable = null;
+            if (((StackPanel)sender).Name == "doneStack")
+            {
+                foreach (DailyTask task in tasks)
+                {
+                    if (task.ID == (int)namebox.Tag)
+                    {
+                        task.Done = true;
+                        task.InProgress = false;
+                        File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                    }
+                }
+            }
+            else if (((StackPanel)sender).Name == "progressStack")
+            {
+                foreach (DailyTask task in tasks)
+                {
+                    if (task.ID == (int)namebox.Tag)
+                    {
+                        task.InProgress = true;
+                        task.Done = false;
+                        File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                    }
+                }
+            }
+            else if (((StackPanel)sender).Name == "unDoneStack")
+            {
+                foreach (DailyTask task in tasks)
+                {
+                    if (task.ID == (int)namebox.Tag)
+                    {
+                        task.Done = false;
+                        task.InProgress = false;
+                        File.WriteAllText("data.json", JsonSerializer.Serialize<List<DailyTask>>(tasks));
+                    }
+                }
+            }
+
+            ((StackPanel)this.FindName("doneStack")).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffe1");
+            ((StackPanel)this.FindName("progressStack")).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffe1");
+            ((StackPanel)this.FindName("unDoneStack")).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffe1");
+
+        }
+        void dragOverThing(object sender, DragEventArgs e)
+        {
+            Point droPoint = e.GetPosition(this);
+
+            Canvas.SetLeft(draggable, droPoint.X);
+            Canvas.SetTop(draggable, droPoint.Y);
+            Panel.SetZIndex(draggable, 69420);
+        }
+        void dragHighlight(object sender, DragEventArgs e)
+        {
+            //#ffffe1 is the default background color
+            //#d6f6e6 is highlight color
+
+            //may be just a tiny tiny tiny little bit inefficient but it's ez so
+            ((StackPanel)this.FindName("doneStack")).Background = (SolidColorBrush) new BrushConverter().ConvertFrom("#ffffe1");
+            ((StackPanel)this.FindName("progressStack")).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffe1");
+            ((StackPanel)this.FindName("unDoneStack")).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#ffffe1");
+
+            ((StackPanel)sender).Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#d6f6e6");
+
+        }
+
+        private void SettingClick(object sender, RoutedEventArgs e)
+        {
+            InitialWizard initialWizard = new InitialWizard();
+            initialWizard.ShowDialog();
+        }
+
+        
     }
 }

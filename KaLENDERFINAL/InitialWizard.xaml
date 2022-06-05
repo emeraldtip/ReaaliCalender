@@ -1,0 +1,30 @@
+﻿<Window x:Class="KaLENDERFINAL.InitialWizard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KaLENDERFINAL"
+        mc:Ignorable="d"
+        Title="Setup" Height="450" Width="800">
+    <Canvas>
+        <Canvas.Background>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="#f8f3da" />
+                <GradientStop Offset="1" Color="#f8f3ca" />
+            </LinearGradientBrush>
+        </Canvas.Background>
+        <Label Content="Tunniplaani link" Canvas.Left="3" Canvas.Top="1" FontSize="20"/>
+        <TextBox x:Name="link" Canvas.Left="10" TextWrapping="Wrap" Canvas.Top="38" Width="754" FontSize="16"/>
+        <Label Content="Keelerühm (number)" Canvas.Left="3" Canvas.Top="55" FontSize="20"/>
+        <TextBox x:Name="ryhm" Canvas.Left="10" TextWrapping="Wrap" Canvas.Top="92" Width="256" FontSize="16"/>
+        <Label Content="Valikkeel (tunnipaani tähis, jäta tühjaks kui pole)" Canvas.Left="3" Canvas.Top="108" FontSize="20"/>
+        <TextBox x:Name="keel" Canvas.Left="10" TextWrapping="Wrap" Canvas.Top="145" Width="273" FontSize="16"/>
+        <Label Content="Valikained (tunniplaani tähised, tühikuga eraldatud, jäta tühjaks kui ei ole)" Canvas.Left="3" Canvas.Top="161" FontSize="20"/>
+        <TextBox x:Name="aine" Canvas.Left="10" TextWrapping="Wrap" Canvas.Top="198" Width="650" FontSize="16"/>
+        <Button Content="Salvesta" Canvas.Left="584" Canvas.Top="365" FontSize="24" Click="Button_Click"/>
+        <Button Content="Tühista" Canvas.Left="684" Canvas.Top="365" FontSize="24" Click="Button_Click_1"/>
+        <Label Canvas.Left="3" Canvas.Top="215" FontSize="20" Width="787"/>
+        <TextBlock Canvas.Left="357" TextWrapping="Wrap" Text="TextBlock" Canvas.Top="-132"/>
+
+    </Canvas>
+</Window>

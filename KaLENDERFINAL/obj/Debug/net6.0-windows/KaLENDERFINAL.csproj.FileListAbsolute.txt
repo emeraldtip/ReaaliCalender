@@ -46,3 +46,5 @@ C:\Users\karlj\source\repos\KaLENDERFINAL\KaLENDERFINAL\bin\Debug\net6.0-windows
 C:\Users\sgjes\source\repos\ReaaliCalender\KaLENDERFINAL\bin\Debug\net6.0-windows\HtmlAgilityPack.dll
 C:\Users\sgjes\source\repos\ReaaliCalender\KaLENDERFINAL\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
 C:\Users\sgjes\source\repos\ReaaliCalender\KaLENDERFINAL\obj\Debug\net6.0-windows\KaLENDERFINAL.csproj.CopyComplete
+C:\Users\sgjes\source\repos\ReaaliCalender\KaLENDERFINAL\obj\Debug\net6.0-windows\InitialWizard.g.cs
+C:\Users\sgjes\source\repos\ReaaliCalender\KaLENDERFINAL\obj\Debug\net6.0-windows\InitialWizard.baml
