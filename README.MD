@@ -1,21 +1,3 @@
-Welcome
-
-To
-
-P
-u
-b
-g
-
-M
-o
-b
-i
-l
-e
-
-lol
-
 **How to run:**
 * Clone the repo
 * Install .NET 6.0 at https://dotnet.microsoft.com/en-us/download/dotnet/6.0
